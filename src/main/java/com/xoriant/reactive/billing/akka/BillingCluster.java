@@ -7,7 +7,7 @@ import akka.actor.Props;
 
 public class BillingCluster {
 
-	public static void main(String[] args) {
+	public BillingCluster() {
 		ActorSystem clusterSystem = ActorSystem.create("ClusterSystem", ConfigFactory.load());
 		clusterSystem.actorOf(Props.create(SimpleClusterListener.class), "listener");
 	}

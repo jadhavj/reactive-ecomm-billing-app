@@ -9,23 +9,20 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import com.typesafe.config.ConfigFactory;
 import com.xoriant.reactive.billing.akka.models.Order;
 import com.xoriant.reactive.billing.util.Mongo;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 public class CartReader extends UntypedActor {
 
-	public static void main(String[] args) throws InterruptedException {
-		ActorSystem system = ActorSystem.create("ClusterSystem", ConfigFactory.load());
-		ActorRef cartReader = system.actorOf(Props.create(CartReader.class), "cartReader");
-
-		ActorSelection selection = system.actorSelection("akka.tcp://ClusterSystem@127.0.0.1:2551/user/billingService");
+	public CartReader() {
+		
+		ActorRef cartReader = Application.system().actorOf(Props.create(CartReader.class), "cartReader");
+		ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@10.20.3.84:2551/user/billingService");
 
 		try {
 			String QUEUE_NAME = "orders";
