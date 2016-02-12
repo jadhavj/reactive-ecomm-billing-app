@@ -21,13 +21,14 @@ public class CartReader extends UntypedActor {
 
 	public CartReader() {
 		
-		ActorRef cartReader = Application.system().actorOf(Props.create(CartReader.class), "cartReader");
 		ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@10.20.3.84:2551/user/billingService");
 
 		try {
 			String QUEUE_NAME = "orders";
 			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost("localhost");
+			factory.setHost("10.20.3.90");
+			factory.setUsername("test");
+			factory.setPassword("test");
 			Connection connection = factory.newConnection();
 			Channel channel = connection.createChannel();
 
@@ -42,12 +43,12 @@ public class CartReader extends UntypedActor {
 					String message = new String(body, "UTF-8");
 					Order order = Mongo.getEntityFromJson(message, Order.class);
 					
-					selection.tell(order, cartReader);
+					selection.tell(order, getSelf());
 				}
 			};
 			channel.basicConsume(QUEUE_NAME, true, consumer);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 

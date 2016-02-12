@@ -23,7 +23,7 @@ public class Application {
 					system.actorOf(Props.create(BillingClusterNode.class));
 					break;
 				case "cart-reader":
-					new CartReader();
+					system.actorOf(Props.create(CartReader.class));
 					break;
 				}
 			}
