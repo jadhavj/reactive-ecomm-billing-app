@@ -21,7 +21,7 @@ public class CartReader extends UntypedActor {
 
 	public CartReader() {
 		
-		ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@10.20.3.84:2551/user/billingService");
+		final ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@10.20.3.84:2551/user/billingService");
 
 		try {
 			String QUEUE_NAME = "orders";

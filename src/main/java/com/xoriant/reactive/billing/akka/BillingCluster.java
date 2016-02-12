@@ -1,14 +1,10 @@
 package com.xoriant.reactive.billing.akka;
 
-import com.typesafe.config.ConfigFactory;
-
-import akka.actor.ActorSystem;
 import akka.actor.Props;
 
 public class BillingCluster {
 
 	public BillingCluster() {
-		ActorSystem clusterSystem = ActorSystem.create("ClusterSystem", ConfigFactory.load());
-		clusterSystem.actorOf(Props.create(SimpleClusterListener.class), "listener");
+		Application.system().actorOf(Props.create(SimpleClusterListener.class), "listener");
 	}
 }

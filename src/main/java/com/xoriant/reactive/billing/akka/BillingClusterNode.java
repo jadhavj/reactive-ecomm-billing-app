@@ -18,7 +18,7 @@ public class BillingClusterNode extends UntypedActor {
 
 	public void preStart() {
 		Config config = getContext().system().settings().config();
-		Config clusterConfig = ConfigFactory.parseFile(new File("billingcluster.conf"));
+		Config clusterConfig = ConfigFactory.parseFile(new File("D:/git/reactive-ecomm-billing-app/resources/billingcluster.conf"));
 		List<Address> seedNodes = new ArrayList<>();
 		seedNodes.add(
 				AddressFromURIString.parse(clusterConfig.getList("akka.cluster.seed-nodes").get(0).toString().split("\"")[1]));

@@ -21,7 +21,7 @@ public class Mongo {
 
     private static final Morphia morphia = new Morphia();
 
-    private static final Datastore datastore = morphia.createDatastore(new MongoClient(), "react-app");
+    private static final Datastore datastore = morphia.createDatastore(new MongoClient("10.20.3.90"), "react-app");
     
     public static class ObjectIdSerializer extends JsonSerializer<ObjectId> {
 
