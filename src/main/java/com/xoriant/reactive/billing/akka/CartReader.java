@@ -9,28 +9,26 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import com.typesafe.config.ConfigFactory;
 import com.xoriant.reactive.billing.akka.models.Order;
 import com.xoriant.reactive.billing.util.Mongo;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 public class CartReader extends UntypedActor {
 
-	public static void main(String[] args) throws InterruptedException {
-		ActorSystem system = ActorSystem.create("ClusterSystem", ConfigFactory.load());
-		ActorRef cartReader = system.actorOf(Props.create(CartReader.class), "cartReader");
-
-		ActorSelection selection = system.actorSelection("akka.tcp://ClusterSystem@127.0.0.1:2551/user/billingService");
+	public CartReader() {
+		
+		final ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@10.20.3.61:2551/user/billingService");
 
 		try {
 			String QUEUE_NAME = "orders";
 			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost("localhost");
+			factory.setHost("10.20.3.90");
+			factory.setUsername("test");
+			factory.setPassword("test");
 			Connection connection = factory.newConnection();
 			Channel channel = connection.createChannel();
 
@@ -45,12 +43,12 @@ public class CartReader extends UntypedActor {
 					String message = new String(body, "UTF-8");
 					Order order = Mongo.getEntityFromJson(message, Order.class);
 					
-					selection.tell(order, cartReader);
+					selection.tell(order, getSelf());
 				}
 			};
 			channel.basicConsume(QUEUE_NAME, true, consumer);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 
