@@ -19,16 +19,17 @@ import akka.actor.UntypedActor;
 
 public class CartReader extends UntypedActor {
 
-	public CartReader() {
+	public CartReader(String seedNode,String rabbitHost,String username,String password,String mongoHost) {
 		
-		final ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@10.20.3.84:2551/user/billingService");
+		final ActorSelection selection = Application.system().actorSelection(seedNode);
 
 		try {
+			System.out.println(selection);
 			String QUEUE_NAME = "orders";
 			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost("10.20.3.90");
-			factory.setUsername("test");
-			factory.setPassword("test");
+			factory.setHost(rabbitHost);
+			factory.setUsername(username);
+			factory.setPassword(password);
 			Connection connection = factory.newConnection();
 			Channel channel = connection.createChannel();
 
@@ -41,6 +42,7 @@ public class CartReader extends UntypedActor {
 						byte[] body) throws IOException {
 
 					String message = new String(body, "UTF-8");
+					Mongo.init(mongoHost);
 					Order order = Mongo.getEntityFromJson(message, Order.class);
 					
 					selection.tell(order, getSelf());

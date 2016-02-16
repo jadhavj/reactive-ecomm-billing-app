@@ -21,7 +21,7 @@ public class Mongo {
 
     private static final Morphia morphia = new Morphia();
 
-    private static final Datastore datastore = morphia.createDatastore(new MongoClient("10.20.3.90"), "react-app");
+    private static Datastore datastore;
     
     public static class ObjectIdSerializer extends JsonSerializer<ObjectId> {
 
@@ -45,15 +45,14 @@ public class Mongo {
     }
     
     private static final CustomObjectMapper mapper = new CustomObjectMapper();
+   
     
-    static {
-    	init();
-    }
-    
-    public static void init() {
+    public static void init(String mongoHost) {
+    	datastore = morphia.createDatastore(new MongoClient(mongoHost), "react-app");
     	mapper.getSerializationConfig().withSerializationInclusion(Include.NON_NULL);
     	mapper.getSerializationConfig().withSerializationInclusion(Include.NON_EMPTY);
     	mapper.setSerializationInclusion(Include.NON_DEFAULT);
+    	
     }
     
     public static Datastore datastore() {
