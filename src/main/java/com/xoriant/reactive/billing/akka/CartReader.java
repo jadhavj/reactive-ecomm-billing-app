@@ -11,16 +11,13 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.xoriant.reactive.billing.akka.models.Order;
 import com.xoriant.reactive.billing.util.Mongo;
-
-import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 public class CartReader extends UntypedActor {
 
-	public CartReader(String seedNode,String rabbitHost,String username,String password,String mongoHost) {
-		
+	public CartReader(String seedNode, String rabbitHost, String username, String password) {
+
 		final ActorSelection selection = Application.system().actorSelection(seedNode);
 
 		try {
@@ -37,14 +34,12 @@ public class CartReader extends UntypedActor {
 			System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
 			Consumer consumer = new DefaultConsumer(channel) {
-				public void handleDelivery(String consumerTag,
-						Envelope envelope, AMQP.BasicProperties properties,
+				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {
 
 					String message = new String(body, "UTF-8");
-					Mongo.init(mongoHost);
 					Order order = Mongo.getEntityFromJson(message, Order.class);
-					
+
 					selection.tell(order, getSelf());
 				}
 			};
