@@ -24,7 +24,7 @@ public class CartReader extends UntypedActor {
 			System.out.println(selection);
 			String QUEUE_NAME = "orders";
 			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost(rabbitHost);
+			factory.setUri(rabbitHost);
 			factory.setUsername(username);
 			factory.setPassword(password);
 			Connection connection = factory.newConnection();

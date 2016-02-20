@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.util.JSON;
 
 public class Mongo {
@@ -45,8 +46,8 @@ public class Mongo {
 
 	private static final CustomObjectMapper mapper = new CustomObjectMapper();
 
-	public static void init(String mongoHost) {
-		datastore = morphia.createDatastore(new MongoClient(mongoHost), "react-app");
+	public static void init(String mongoHost,String db) {
+		datastore = morphia.createDatastore(new MongoClient(new MongoClientURI(mongoHost)),db);
 		mapper.getSerializationConfig().withSerializationInclusion(Include.NON_NULL);
 		mapper.getSerializationConfig().withSerializationInclusion(Include.NON_EMPTY);
 		mapper.setSerializationInclusion(Include.NON_DEFAULT);

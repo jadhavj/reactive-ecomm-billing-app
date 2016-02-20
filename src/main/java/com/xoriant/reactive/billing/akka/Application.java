@@ -16,7 +16,6 @@ public class Application extends UntypedActor {
 	private static String rabbitHost;
 	private static String username;
 	private static String password;
-	private static String clusterConfigFile;
 
 	public static ActorSystem system() {
 		return system;
@@ -30,16 +29,14 @@ public class Application extends UntypedActor {
 					new BillingCluster();
 					break;
 				case "node":
-					if (args.length == 6) {
-						if (args[2].equals("clusterConfigFile"))
-							clusterConfigFile = args[3];
-						if (args[4].equals("mongoHost"))
-							Mongo.init(args[5]);
-						system.actorOf(Props.create(BillingClusterNode.class, clusterConfigFile));
+					if (args.length == 5) {
+						if (args[2].equals("mongoHost"))
+							Mongo.init(args[3], args[4]);
+						system.actorOf(Props.create(BillingClusterNode.class));
 					}
 					break;
 				case "cart-reader":
-					if (args.length == 12) {
+					if (args.length == 13) {
 						if (args[2].equals("seedNode"))
 							seedNode = args[3];
 						if (args[4].equals("rabbitHost"))
@@ -49,7 +46,7 @@ public class Application extends UntypedActor {
 						if (args[8].equals("password"))
 							password = args[9];
 						if (args[10].equals("mongoHost"))
-							Mongo.init(args[11]);
+							Mongo.init(args[11], args[12]);
 						system.actorOf(Props.create(CartReader.class, seedNode, rabbitHost, username, password));
 					}
 
