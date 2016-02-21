@@ -11,24 +11,22 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.xoriant.reactive.billing.akka.models.Order;
 import com.xoriant.reactive.billing.util.Mongo;
-
-import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 public class CartReader extends UntypedActor {
 
-	public CartReader() {
-		
-		final ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@10.20.3.61:2551/user/billingService");
+	public CartReader(String seedNode, String rabbitHost, String username, String password) {
+
+		final ActorSelection selection = Application.system().actorSelection("akka.tcp://NodeSystem@" + seedNode + ":2551/user/billingService");
 
 		try {
+			System.out.println(selection);
 			String QUEUE_NAME = "orders";
 			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost("10.20.3.90");
-			factory.setUsername("test");
-			factory.setPassword("test");
+			factory.setUri(rabbitHost);
+			factory.setUsername(username);
+			factory.setPassword(password);
 			Connection connection = factory.newConnection();
 			Channel channel = connection.createChannel();
 
@@ -36,13 +34,12 @@ public class CartReader extends UntypedActor {
 			System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
 			Consumer consumer = new DefaultConsumer(channel) {
-				public void handleDelivery(String consumerTag,
-						Envelope envelope, AMQP.BasicProperties properties,
+				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {
 
 					String message = new String(body, "UTF-8");
 					Order order = Mongo.getEntityFromJson(message, Order.class);
-					
+
 					selection.tell(order, getSelf());
 				}
 			};
