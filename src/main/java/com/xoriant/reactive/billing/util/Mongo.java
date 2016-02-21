@@ -47,7 +47,7 @@ public class Mongo {
 	private static final CustomObjectMapper mapper = new CustomObjectMapper();
 
 	public static void init(String mongoHost,String db) {
-		datastore = morphia.createDatastore(new MongoClient(new MongoClientURI(mongoHost)),db);
+		datastore = morphia.createDatastore(new MongoClient(mongoHost),db);
 		mapper.getSerializationConfig().withSerializationInclusion(Include.NON_NULL);
 		mapper.getSerializationConfig().withSerializationInclusion(Include.NON_EMPTY);
 		mapper.setSerializationInclusion(Include.NON_DEFAULT);

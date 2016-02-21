@@ -18,13 +18,13 @@ public class CartReader extends UntypedActor {
 
 	public CartReader(String seedNode, String rabbitHost, String username, String password) {
 
-		final ActorSelection selection = Application.system().actorSelection("akka.tcp://NodeSystem@" + seedNode + ":2551/user/billingService");
+		final ActorSelection selection = Application.system().actorSelection("akka.tcp://ClusterSystem@" + seedNode + ":2551/user/billingService");
 
 		try {
 			System.out.println(selection);
 			String QUEUE_NAME = "orders";
 			ConnectionFactory factory = new ConnectionFactory();
-			factory.setUri(rabbitHost);
+			factory.setHost(rabbitHost);
 			factory.setUsername(username);
 			factory.setPassword(password);
 			Connection connection = factory.newConnection();

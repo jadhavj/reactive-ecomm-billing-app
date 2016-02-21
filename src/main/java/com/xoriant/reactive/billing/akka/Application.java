@@ -31,19 +31,20 @@ public class Application extends UntypedActor {
 					new BillingCluster();
 					break;
 				case "node":
-					system = ActorSystem.create("NodeSystem", config);
+					system = ActorSystem.create("ClusterSystem", config);
 					if (args.length == 5) {
 						if (args[2].equals("--mongo-host"))
-							Mongo.init(args[3], args[4]);
+							Mongo.init(args[3], "react-app");
 						system.actorOf(Props.create(BillingClusterNode.class));
 					}
 					break;
 				case "cart-reader":
 					system = ActorSystem.create("CartReaderSystem", config);
-					if (args.length == 13) {
+					if (args.length == 12) {
 						int i = 2;
-						for (String arg : args) {
-							if (args.equals("--seed-node-ip"))
+						for (; i < args.length; i++) {
+							String arg = args[i];
+							if (args.equals("--seed-host"))
 								seedNode = args[i+1];
 							else if (arg.equals("--mongo-host"))
 								mongoHost = args[i+1];
